@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>palette gen — zecarrot</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d0d0d; color: #e0e0e0; font-family: 'JetBrains Mono', monospace; min-height: 100vh; padding: 2rem; display: flex; flex-direction: column; }
+    nav { display: flex; gap: 2rem; margin-bottom: 2rem; font-size: 0.8rem; letter-spacing: 0.1em; }
+    nav a { color: #888; text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover, nav a.active { color: #ff6b35; }
+    .page { display: flex; flex-direction: column; align-items: center; flex: 1; max-width: 700px; margin: 0 auto; width: 100%; }
+    h1 { font-size: 1.5rem; color: #fff; margin-bottom: 0.25rem; }
+    .sub { color: #555; font-size: 0.8rem; margin-bottom: 2rem; }
+    .modes { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
+    .mode-btn { background: #1a1a1a; border: 1px solid #2a2a2a; color: #888; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; padding: 0.4rem 0.75rem; border-radius: 999px; cursor: pointer; transition: all 0.2s; }
+    .mode-btn:hover, .mode-btn.active { border-color: #ff6b35; color: #ff6b35; }
+    .palette { display: flex; width: 100%; height: 120px; border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem; gap: 2px; }
+    .swatch { flex: 1; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.5rem; cursor: pointer; transition: flex 0.3s; position: relative; }
+    .swatch:hover { flex: 1.5; }
+    .swatch-hex { font-size: 0.65rem; color: rgba(0,0,0,0.6); font-weight: bold; writing-mode: vertical-rl; transform: rotate(180deg); opacity: 0; transition: opacity 0.2s; }
+    .swatch:hover .swatch-hex { opacity: 1; }
+    .copied { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: #ff6b35; color: #000; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: bold; padding: 0.5rem 1.25rem; border-radius: 999px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 99; }
+    .copied.show { opacity: 1; }
+    .gen-btn { background: #ff6b35; border: none; color: #000; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: bold; padding: 0.75rem 2rem; border-radius: 8px; cursor: pointer; transition: background 0.2s; margin-bottom: 1rem; }
+    .gen-btn:hover { background: #ff8555; }
+    .hint { color: #333; font-size: 0.75rem; }
+    .footer { margin-top: auto; padding-top: 2rem; color: #444; font-size: 0.75rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../index.html">home</a>
+    <a href="../projects.html">projects</a>
+    <a href="../about.html">about</a>
+    <a href="calculator.html" class="active">experiments</a>
+  </nav>
+  <div class="page">
+    <h1>palette generator</h1>
+    <p class="sub">// experiment 007 — click a swatch to copy hex</p>
+    <div class="modes">
+      <button class="mode-btn active" onclick="setMode('analogous',this)">analogous</button>
+      <button class="mode-btn" onclick="setMode('complementary',this)">complementary</button>
+      <button class="mode-btn" onclick="setMode('triadic',this)">triadic</button>
+      <button class="mode-btn" onclick="setMode('monochromatic',this)">monochromatic</button>
+      <button class="mode-btn" onclick="setMode('random',this)">random</button>
+    </div>
+    <div class="palette" id="palette"></div>
+    <button class="gen-btn" onclick="generate()">generate</button>
+    <p class="hint">hover to expand · click to copy hex</p>
+  </div>
+  <div class="copied" id="copied">copied!</div>
+  <div class="footer">zecarrot-builds — made with too much free time</div>
+  <script>
+    let mode = 'analogous';
+    function hslToHex(h,s,l) {
+      s/=100; l/=100;
+      const a=s*Math.min(l,1-l);
+      const f=n=>{const k=(n+h/30)%12; const c=l-a*Math.max(Math.min(k-3,9-k,1),-1); return Math.round(255*c).toString(16).padStart(2,'0');};
+      return '#'+f(0)+f(8)+f(4);
+    }
+    function setMode(m, btn) { mode = m; document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); generate(); }
+    function generate() {
+      const h = Math.floor(Math.random()*360);
+      const s = 60+Math.random()*30;
+      const l = 40+Math.random()*20;
+      let colors = [];
+      if (mode==='analogous') colors = [hslToHex(h,s,l),hslToHex((h+30)%360,s,l),hslToHex((h+60)%360,s,l),hslToHex((h+90)%360,s,l),hslToHex((h+120)%360,s,l)];
+      else if (mode==='complementary') colors = [hslToHex(h,s,l-10),hslToHex(h,s,l),hslToHex(h,s,l+10),hslToHex((h+180)%360,s,l),hslToHex((h+180)%360,s,l-10)];
+      else if (mode==='triadic') colors = [hslToHex(h,s,l),hslToHex(h,s,l+15),hslToHex((h+120)%360,s,l),hslToHex((h+120)%360,s,l+15),hslToHex((h+240)%360,s,l)];
+      else if (mode==='monochromatic') colors = [hslToHex(h,s,20),hslToHex(h,s,35),hslToHex(h,s,50),hslToHex(h,s,65),hslToHex(h,s,80)];
+      else colors = Array.from({length:5}, ()=>hslToHex(Math.random()*360,50+Math.random()*40,40+Math.random()*25));
+      const p = document.getElementById('palette');
+      p.innerHTML = colors.map(c=>`<div class="swatch" style="background:${c}" onclick="copy('${c}')"><span class="swatch-hex">${c}</span></div>`).join('');
+    }
+    function copy(hex) {
+      navigator.clipboard.writeText(hex).catch(()=>{});
+      const el = document.getElementById('copied');
+      el.textContent = `copied ${hex}`;
+      el.classList.add('show');
+      setTimeout(()=>el.classList.remove('show'), 1500);
+    }
+    generate();
+  </script>
+</body>
+</html>
