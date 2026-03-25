@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>about — zecarrot</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d0d0d; color: #e0e0e0; font-family: 'JetBrains Mono', monospace; min-height: 100vh; padding: 2rem; }
+    nav { display: flex; gap: 2rem; margin-bottom: 3rem; font-size: 0.8rem; letter-spacing: 0.1em; }
+    nav a { color: #888; text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover, nav a.active { color: #ff6b35; }
+    .container { max-width: 640px; margin: 0 auto; }
+    h1 { font-size: 2rem; color: #fff; margin-bottom: 0.25rem; }
+    .sub { color: #555; font-size: 0.85rem; margin-bottom: 2.5rem; }
+    .section { margin-bottom: 2rem; }
+    .section-title { color: #ff6b35; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; border-bottom: 1px solid #222; padding-bottom: 0.4rem; }
+    .section p { color: #bbb; line-height: 1.8; font-size: 0.9rem; }
+    .section p + p { margin-top: 0.75rem; }
+    .highlight { color: #ff6b35; }
+    .list { list-style: none; padding: 0; }
+    .list li { color: #bbb; font-size: 0.9rem; padding: 0.3rem 0; }
+    .list li::before { content: "→ "; color: #ff6b35; }
+    .footer { margin-top: 3rem; color: #444; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">home</a>
+    <a href="projects.html">projects</a>
+    <a href="about.html" class="active">about</a>
+    <a href="experiments/calculator.html">experiments</a>
+  </nav>
+  <div class="container">
+    <h1>about me</h1>
+    <p class="sub">// the longer version</p>
+
+    <div class="section">
+      <div class="section-title">who</div>
+      <p>i'm zecarrot. 11th grader, based in Texas. i'm into how things are built — like actually built, structurally, from the ground up. my main interest is <span class="highlight">architectural engineering</span>, which is basically the overlap between architecture and structural engineering. i think about load paths and why buildings don't fall down more than a normal person probably should.</p>
+      <p>outside of school i build stuff — code projects, fabrication stuff in PAE class, games, simulations. if there's a problem worth solving i'll probably try to make something that solves it.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">what i'm into</div>
+      <ul class="list">
+        <li>architectural engineering and structural design</li>
+        <li>3D modeling and fabrication</li>
+        <li>building apps and tools (especially with AI)</li>
+        <li>Deadlock (main: Victor, Vyper, Yamato, Rem)</li>
+        <li>movies — Interstellar is probably the best film ever made</li>
+        <li>Gustave Eiffel and what he did with iron</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-title">why gustave eiffel</div>
+      <p>the dude built the Eiffel Tower in 1889 with basically no computers. just math, iron, and the audacity to think it wouldn't fall over. it was supposed to be temporary and now it's one of the most recognizable structures on earth. that's insane. that's the kind of engineer i want to be.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">currently</div>
+      <ul class="list">
+        <li>11th grade, figuring out the college thing</li>
+        <li>building the Deadlock Build Advisor app</li>
+        <li>learning more about structural analysis</li>
+        <li>putting too many hours into Deadlock</li>
+      </ul>
+    </div>
+
+    <div class="footer">zecarrot-builds &mdash; made with too much free time</div>
+  </div>
+</body>
+</html>
