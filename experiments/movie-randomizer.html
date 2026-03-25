@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>movie randomizer — zecarrot</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d0d0d; color: #e0e0e0; font-family: 'JetBrains Mono', monospace; min-height: 100vh; padding: 2rem; display: flex; flex-direction: column; }
+    nav { display: flex; gap: 2rem; margin-bottom: 3rem; font-size: 0.8rem; letter-spacing: 0.1em; }
+    nav a { color: #888; text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover, nav a.active { color: #ff6b35; }
+    .page { display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; }
+    h1 { font-size: 1.5rem; color: #fff; margin-bottom: 0.25rem; }
+    .sub { color: #555; font-size: 0.8rem; margin-bottom: 3rem; }
+    .card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      width: 340px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      transition: border-color 0.3s;
+    }
+    .card.active { border-color: #ff6b35; }
+    .movie-title { font-size: 1.4rem; color: #fff; font-weight: bold; margin-bottom: 0.5rem; }
+    .movie-year { color: #ff6b35; font-size: 0.8rem; margin-bottom: 0.75rem; }
+    .movie-why { color: #888; font-size: 0.8rem; line-height: 1.6; }
+    .placeholder { color: #333; font-size: 0.9rem; }
+    button {
+      background: #ff6b35;
+      border: none;
+      color: #000;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: bold;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: background 0.2s;
+    }
+    button:hover { background: #ff8555; }
+    .footer { margin-top: auto; padding-top: 3rem; color: #444; font-size: 0.75rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../index.html">home</a>
+    <a href="../projects.html">projects</a>
+    <a href="../about.html">about</a>
+    <a href="calculator.html" class="active">experiments</a>
+  </nav>
+  <div class="page">
+    <h1>what should i watch</h1>
+    <p class="sub">// experiment 002 — zecarrot's picks</p>
+    <div class="card" id="card">
+      <p class="placeholder">hit the button</p>
+    </div>
+    <button onclick="roll()">pick something</button>
+  </div>
+  <div class="footer">zecarrot-builds &mdash; made with too much free time</div>
+  <script>
+    const movies = [
+      { title: "Interstellar", year: 2014, why: "the greatest film ever made. no notes." },
+      { title: "Inception", year: 2010, why: "nolan doing nolan things at full power." },
+      { title: "The Dark Knight", year: 2008, why: "ledger's joker is untouchable." },
+      { title: "Blade Runner 2049", year: 2017, why: "visually perfect. criminally underrated." },
+      { title: "Arrival", year: 2016, why: "the ending will wreck you. in a good way." },
+      { title: "The Martian", year: 2015, why: "engineering as survival. this is peak." },
+      { title: "Ex Machina", year: 2014, why: "small scale, massive ideas about AI." },
+      { title: "Parasite", year: 2019, why: "you think you know where it's going. you don't." },
+      { title: "Everything Everywhere All at Once", year: 2022, why: "chaotic and somehow deeply emotional." },
+      { title: "Dune", year: 2021, why: "worldbuilding at a scale that shouldn't be possible." },
+      { title: "Oppenheimer", year: 2023, why: "3 hours and it earns every single minute." },
+      { title: "The Prestige", year: 2006, why: "nolan's most rewatchable. every viewing you catch something new." },
+    ];
+    let last = -1;
+    function roll() {
+      let i;
+      do { i = Math.floor(Math.random() * movies.length); } while (i === last);
+      last = i;
+      const m = movies[i];
+      const card = document.getElementById('card');
+      card.classList.add('active');
+      card.innerHTML = `<div class="movie-title">${m.title}</div><div class="movie-year">${m.year}</div><div class="movie-why">${m.why}</div>`;
+    }
+  </script>
+</body>
+</html>
