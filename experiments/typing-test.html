@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>typing test — zecarrot</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d0d0d; color: #e0e0e0; font-family: 'JetBrains Mono', monospace; min-height: 100vh; padding: 2rem; display: flex; flex-direction: column; }
+    nav { display: flex; gap: 2rem; margin-bottom: 2rem; font-size: 0.8rem; letter-spacing: 0.1em; }
+    nav a { color: #888; text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover, nav a.active { color: #ff6b35; }
+    .page { display: flex; flex-direction: column; align-items: center; flex: 1; max-width: 700px; margin: 0 auto; width: 100%; }
+    h1 { font-size: 1.5rem; color: #fff; margin-bottom: 0.25rem; }
+    .sub { color: #555; font-size: 0.8rem; margin-bottom: 2rem; }
+    .hud { display: flex; gap: 3rem; margin-bottom: 1.5rem; font-size: 0.85rem; width: 100%; }
+    .hud div { display: flex; flex-direction: column; gap: 0.2rem; }
+    .hud .label { color: #555; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .hud .val { color: #ff6b35; font-size: 1.5rem; font-weight: bold; }
+    .word-display {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 1.5rem;
+      font-size: 1.2rem;
+      line-height: 2;
+      width: 100%;
+      margin-bottom: 1rem;
+      min-height: 100px;
+      letter-spacing: 0.05em;
+    }
+    .word { margin-right: 0.4em; display: inline-block; }
+    .word.correct { color: #4caf50; }
+    .word.wrong { color: #f44336; text-decoration: underline; }
+    .word.active { color: #fff; }
+    .word.pending { color: #444; }
+    input {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+    }
+    input:focus { border-color: #ff6b35; }
+    input.wrong { border-color: #f44336; }
+    .restart-btn {
+      background: transparent;
+      border: 1px solid #333;
+      color: #888;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      padding: 0.5rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+    .restart-btn:hover { border-color: #ff6b35; color: #ff6b35; }
+    .results {
+      background: #111;
+      border: 1px solid #ff6b35;
+      border-radius: 8px;
+      padding: 2rem;
+      width: 100%;
+      text-align: center;
+      display: none;
+    }
+    .results.show { display: block; }
+    .wpm-big { font-size: 4rem; color: #ff6b35; font-weight: bold; }
+    .wpm-label { color: #555; font-size: 0.8rem; margin-bottom: 1rem; }
+    .result-stats { display: flex; justify-content: center; gap: 3rem; margin-top: 1rem; }
+    .footer { margin-top: auto; padding-top: 2rem; color: #444; font-size: 0.75rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../index.html">home</a>
+    <a href="../projects.html">projects</a>
+    <a href="../about.html">about</a>
+    <a href="calculator.html" class="active">experiments</a>
+  </nav>
+  <div class="page">
+    <h1>typing test</h1>
+    <p class="sub">// experiment 005</p>
+    <div class="hud">
+      <div><div class="label">time</div><div class="val" id="timer">30</div></div>
+      <div><div class="label">wpm</div><div class="val" id="wpm">0</div></div>
+      <div><div class="label">accuracy</div><div class="val" id="acc">100%</div></div>
+    </div>
+    <div class="word-display" id="display"></div>
+    <input type="text" id="input" placeholder="start typing..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+    <button class="restart-btn" onclick="restart()">restart</button>
+    <div class="results" id="results">
+      <div class="wpm-big" id="final-wpm">0</div>
+      <div class="wpm-label">words per minute</div>
+      <div class="result-stats">
+        <div><div class="label" style="color:#555;font-size:0.7rem">accuracy</div><div style="color:#ff6b35;font-size:1.2rem;font-weight:bold" id="final-acc">0%</div></div>
+        <div><div class="label" style="color:#555;font-size:0.7rem">correct</div><div style="color:#4caf50;font-size:1.2rem;font-weight:bold" id="final-correct">0</div></div>
+        <div><div class="label" style="color:#555;font-size:0.7rem">wrong</div><div style="color:#f44336;font-size:1.2rem;font-weight:bold" id="final-wrong">0</div></div>
+      </div>
+      <button class="restart-btn" style="margin-top:1.5rem" onclick="restart()">try again</button>
+    </div>
+  </div>
+  <div class="footer">zecarrot-builds — made with too much free time</div>
+  <script>
+    const wordList = ["the","be","to","of","and","a","in","that","have","it","for","not","on","with","he","as","you","do","at","this","but","his","by","from","they","we","say","her","she","or","an","will","my","one","all","would","there","their","what","so","up","out","if","about","who","get","which","go","me","when","make","can","like","time","no","just","him","know","take","people","into","year","your","good","some","could","them","see","other","than","then","now","look","only","come","its","over","think","also","back","after","use","two","how","our","work","first","well","way","even","new","want","because","any","these","give","day","most","us","great","between","need","large","often","hand","high","place","hold","free","real","life","few","north","open","seem","together","next","white","children","begin","got","walk","example","ease","paper","always","music","those","both","mark","book","letter","until","mile","river","car","feet","care","second","enough","plain","girl","usual","young","ready","above","ever","red","list","though","feel","talk","bird","soon","body","dog","family","direct","pose","leave"];
+    let words = [], current = 0, typed = 0, wrong = 0, started = false, finished = false, timerInterval, timeLeft = 30;
+
+    function generateWords() {
+      words = [];
+      for (let i = 0; i < 80; i++) words.push(wordList[Math.floor(Math.random() * wordList.length)]);
+    }
+
+    function render() {
+      const d = document.getElementById('display');
+      d.innerHTML = words.map((w, i) => {
+        let cls = 'pending';
+        if (i < current) cls = 'correct';
+        if (i === current) cls = 'active';
+        return `<span class="word ${cls}" id="w${i}">${w}</span>`;
+      }).join('');
+      const el = document.getElementById(`w${current}`);
+      if (el) el.scrollIntoView({block:'nearest'});
+    }
+
+    function updateStats() {
+      const wpm = Math.round((typed / 5) / ((30 - timeLeft) / 60)) || 0;
+      const acc = typed + wrong > 0 ? Math.round((typed / (typed + wrong)) * 100) : 100;
+      document.getElementById('wpm').textContent = isFinite(wpm) ? wpm : 0;
+      document.getElementById('acc').textContent = acc + '%';
+    }
+
+    document.getElementById('input').addEventListener('input', e => {
+      if (finished) return;
+      if (!started) {
+        started = true;
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          document.getElementById('timer').textContent = timeLeft;
+          updateStats();
+          if (timeLeft <= 0) endTest();
+        }, 1000);
+      }
+      const val = e.target.value;
+      if (val.endsWith(' ')) {
+        const attempt = val.trim();
+        const el = document.getElementById(`w${current}`);
+        if (attempt === words[current]) { el.className = 'word correct'; typed++; }
+        else { el.className = 'word wrong'; wrong++; }
+        current++;
+        e.target.value = '';
+        e.target.className = '';
+        render();
+        updateStats();
+      } else {
+        const correct = words[current].startsWith(val);
+        e.target.className = val.length > 0 && !correct ? 'wrong' : '';
+      }
+    });
+
+    function endTest() {
+      clearInterval(timerInterval);
+      finished = true;
+      document.getElementById('input').disabled = true;
+      const wpm = Math.round((typed / 5) / (30 / 60));
+      const acc = typed + wrong > 0 ? Math.round((typed / (typed + wrong)) * 100) : 100;
+      document.getElementById('final-wpm').textContent = wpm;
+      document.getElementById('final-acc').textContent = acc + '%';
+      document.getElementById('final-correct').textContent = typed;
+      document.getElementById('final-wrong').textContent = wrong;
+      document.getElementById('results').classList.add('show');
+    }
+
+    function restart() {
+      clearInterval(timerInterval);
+      current = 0; typed = 0; wrong = 0; started = false; finished = false; timeLeft = 30;
+      document.getElementById('timer').textContent = 30;
+      document.getElementById('wpm').textContent = 0;
+      document.getElementById('acc').textContent = '100%';
+      document.getElementById('input').disabled = false;
+      document.getElementById('input').value = '';
+      document.getElementById('input').className = '';
+      document.getElementById('results').classList.remove('show');
+      generateWords(); render();
+      document.getElementById('input').focus();
+    }
+
+    generateWords(); render();
+  </script>
+</body>
+</html>
