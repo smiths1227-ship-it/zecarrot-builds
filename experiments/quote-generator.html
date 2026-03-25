@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>quotes — zecarrot</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d0d0d; color: #e0e0e0; font-family: 'JetBrains Mono', monospace; min-height: 100vh; padding: 2rem; display: flex; flex-direction: column; }
+    nav { display: flex; gap: 2rem; margin-bottom: 3rem; font-size: 0.8rem; letter-spacing: 0.1em; }
+    nav a { color: #888; text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover, nav a.active { color: #ff6b35; }
+    .page { display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; padding-top: 2rem; }
+    h1 { font-size: 1.5rem; color: #fff; margin-bottom: 0.25rem; }
+    .sub { color: #555; font-size: 0.8rem; margin-bottom: 3rem; }
+    .quote-box {
+      background: #111;
+      border: 1px solid #222;
+      border-left: 3px solid #ff6b35;
+      border-radius: 8px;
+      padding: 2rem;
+      max-width: 560px;
+      width: 100%;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      transition: opacity 0.3s;
+    }
+    .quote-text { color: #ddd; font-size: 1rem; line-height: 1.8; margin-bottom: 1rem; font-style: italic; }
+    .quote-author { color: #ff6b35; font-size: 0.75rem; text-align: right; }
+    .filters { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
+    .filter-btn {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: #888;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { border-color: #ff6b35; color: #ff6b35; }
+    button.roll-btn {
+      background: #ff6b35;
+      border: none;
+      color: #000;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: bold;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button.roll-btn:hover { background: #ff8555; }
+    .footer { margin-top: auto; padding-top: 3rem; color: #444; font-size: 0.75rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../index.html">home</a>
+    <a href="../projects.html">projects</a>
+    <a href="../about.html">about</a>
+    <a href="calculator.html" class="active">experiments</a>
+  </nav>
+  <div class="page">
+    <h1>quote generator</h1>
+    <p class="sub">// experiment 003 — words worth saving</p>
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('all', this)">all</button>
+      <button class="filter-btn" onclick="setFilter('eiffel', this)">eiffel</button>
+      <button class="filter-btn" onclick="setFilter('engineering', this)">engineering</button>
+      <button class="filter-btn" onclick="setFilter('building', this)">building</button>
+    </div>
+    <div class="quote-box" id="qbox">
+      <div class="quote-text" id="qtext">hit the button.</div>
+      <div class="quote-author" id="qauthor"></div>
+    </div>
+    <button class="roll-btn" onclick="nextQuote()">next quote</button>
+  </div>
+  <div class="footer">zecarrot-builds &mdash; made with too much free time</div>
+  <script>
+    const quotes = [
+      { text: "To build is to create, and to create is to think.", author: "Gustave Eiffel", cat: "eiffel" },
+      { text: "I ought to be jealous of the tower. She is more famous than I am.", author: "Gustave Eiffel", cat: "eiffel" },
+      { text: "It's not the mountain we conquer, but ourselves.", author: "Edmund Hillary", cat: "building" },
+      { text: "The engineer has been, and is, a maker of history.", author: "James Kip Finch", cat: "engineering" },
+      { text: "Science knows no country, because knowledge belongs to humanity.", author: "Louis Pasteur", cat: "engineering" },
+      { text: "The impossible is just the possible that hasn't been tried yet.", author: "unknown", cat: "building" },
+      { text: "Architecture is inhabited sculpture.", author: "Constantin Brancusi", cat: "building" },
+      { text: "A great building must begin with the unmeasurable, must go through measurable means when it is being designed, and in the end must be unmeasurable.", author: "Louis Kahn", cat: "building" },
+      { text: "The details are not the details. They make the design.", author: "Charles Eames", cat: "engineering" },
+      { text: "Do not wait; the time will never be just right. Start where you stand.", author: "Napoleon Hill", cat: "building" },
+      { text: "Everything that can be invented has been invented. Except the things that haven't.", author: "unknown", cat: "engineering" },
+      { text: "My tower will be the tallest structure in the world and the most original.", author: "Gustave Eiffel", cat: "eiffel" },
+    ];
+    let filter = 'all', last = -1;
+    function setFilter(f, btn) {
+      filter = f;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      nextQuote();
+    }
+    function nextQuote() {
+      const pool = filter === 'all' ? quotes : quotes.filter(q => q.cat === filter);
+      if (!pool.length) return;
+      let i; do { i = Math.floor(Math.random() * pool.length); } while (pool.length > 1 && i === last);
+      last = i;
+      document.getElementById('qtext').textContent = `"${pool[i].text}"`;
+      document.getElementById('qauthor').textContent = `— ${pool[i].author}`;
+    }
+  </script>
+</body>
+</html>
