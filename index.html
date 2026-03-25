@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>zecarrot</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0d0d0d;
+      color: #e0e0e0;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 640px;
+      width: 100%;
+    }
+
+    .tag {
+      color: #ff6b35;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ffffff;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      color: #888;
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      color: #ff6b35;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid #222;
+      padding-bottom: 0.4rem;
+    }
+
+    .section p {
+      color: #bbb;
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .interests {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #ccc;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+    }
+
+    .footer {
+      margin-top: 3rem;
+      color: #444;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="tag">// hello world</div>
+    <h1>zecarrot</h1>
+    <p class="subtitle">student. builder. future engineer.</p>
+
+    <div class="section">
+      <div class="section-title">about</div>
+      <p>
+        11th grader with a thing for how structures work and why they don't fall down.
+        interested in architectural engineering and making stuff that actually does something.
+        this is where i put projects, experiments, and whatever else i feel like building.
+      </p>
+    </div>
+
+    <div class="section">
+      <div class="section-title">interests</div>
+      <div class="interests">
+        <span class="chip">architectural engineering</span>
+        <span class="chip">3D modeling</span>
+        <span class="chip">design</span>
+        <span class="chip">Gustave Eiffel</span>
+        <span class="chip">Interstellar</span>
+        <span class="chip">building things</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">status</div>
+      <p>currently: learning, experimenting, figuring it out.</p>
+    </div>
+
+    <div class="footer">zecarrot-builds &mdash; made with too much free time</div>
+  </div>
+</body>
+</html>
