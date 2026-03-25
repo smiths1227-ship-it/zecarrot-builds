@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>snake — zecarrot</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d0d0d; color: #e0e0e0; font-family: 'JetBrains Mono', monospace; min-height: 100vh; padding: 2rem; display: flex; flex-direction: column; }
+    nav { display: flex; gap: 2rem; margin-bottom: 2rem; font-size: 0.8rem; letter-spacing: 0.1em; }
+    nav a { color: #888; text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover, nav a.active { color: #ff6b35; }
+    .page { display: flex; flex-direction: column; align-items: center; flex: 1; }
+    h1 { font-size: 1.5rem; color: #fff; margin-bottom: 0.25rem; }
+    .sub { color: #555; font-size: 0.8rem; margin-bottom: 1.5rem; }
+    .hud { display: flex; gap: 3rem; margin-bottom: 1rem; font-size: 0.85rem; }
+    .hud span { color: #888; }
+    .hud strong { color: #ff6b35; }
+    canvas {
+      border: 1px solid #222;
+      border-radius: 8px;
+      display: block;
+    }
+    .msg { margin-top: 1rem; color: #555; font-size: 0.8rem; }
+    .msg span { color: #ff6b35; }
+    .footer { margin-top: auto; padding-top: 2rem; color: #444; font-size: 0.75rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../index.html">home</a>
+    <a href="../projects.html">projects</a>
+    <a href="../about.html">about</a>
+    <a href="calculator.html" class="active">experiments</a>
+  </nav>
+  <div class="page">
+    <h1>snake</h1>
+    <p class="sub">// experiment 004</p>
+    <div class="hud">
+      <div><span>score </span><strong id="score">0</strong></div>
+      <div><span>best </span><strong id="best">0</strong></div>
+    </div>
+    <canvas id="c" width="400" height="400"></canvas>
+    <p class="msg" id="msg"><span>press any arrow key</span> to start</p>
+  </div>
+  <div class="footer">zecarrot-builds — made with too much free time</div>
+  <script>
+    const c = document.getElementById('c');
+    const ctx = c.getContext('2d');
+    const SZ = 20, COLS = 20, ROWS = 20;
+    let snake, dir, next, food, score, best = 0, running = false, loop;
+
+    function init() {
+      snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+      dir = {x:1,y:0}; next = {x:1,y:0};
+      score = 0;
+      document.getElementById('score').textContent = 0;
+      placeFood();
+      draw();
+    }
+
+    function placeFood() {
+      do { food = {x:Math.floor(Math.random()*COLS), y:Math.floor(Math.random()*ROWS)}; }
+      while (snake.some(s => s.x===food.x && s.y===food.y));
+    }
+
+    function step() {
+      dir = next;
+      const head = {x: snake[0].x+dir.x, y: snake[0].y+dir.y};
+      if (head.x<0||head.x>=COLS||head.y<0||head.y>=ROWS||snake.some(s=>s.x===head.x&&s.y===head.y)) {
+        clearInterval(loop); running = false;
+        document.getElementById('msg').innerHTML = `<span>game over — ${score} pts.</span> press arrow to restart`;
+        return;
+      }
+      snake.unshift(head);
+      if (head.x===food.x && head.y===food.y) {
+        score++;
+        if (score > best) { best = score; document.getElementById('best').textContent = best; }
+        document.getElementById('score').textContent = score;
+        placeFood();
+      } else { snake.pop(); }
+      draw();
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0d0d0d'; ctx.fillRect(0,0,c.width,c.height);
+      // grid
+      ctx.strokeStyle = '#141414'; ctx.lineWidth = 0.5;
+      for (let i=0;i<=COLS;i++) { ctx.beginPath(); ctx.moveTo(i*SZ,0); ctx.lineTo(i*SZ,c.height); ctx.stroke(); }
+      for (let j=0;j<=ROWS;j++) { ctx.beginPath(); ctx.moveTo(0,j*SZ); ctx.lineTo(c.width,j*SZ); ctx.stroke(); }
+      // food
+      ctx.fillStyle = '#ff6b35';
+      ctx.shadowColor = '#ff6b35'; ctx.shadowBlur = 10;
+      ctx.fillRect(food.x*SZ+2, food.y*SZ+2, SZ-4, SZ-4);
+      ctx.shadowBlur = 0;
+      // snake
+      snake.forEach((s,i) => {
+        const t = 1 - i/snake.length;
+        ctx.fillStyle = `rgba(255,107,53,${0.3 + t*0.7})`;
+        ctx.fillRect(s.x*SZ+1, s.y*SZ+1, SZ-2, SZ-2);
+      });
+    }
+
+    document.addEventListener('keydown', e => {
+      const map = { ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0} };
+      if (!map[e.key]) return;
+      e.preventDefault();
+      const d = map[e.key];
+      if (d.x === -dir.x && d.y === -dir.y) return;
+      next = d;
+      if (!running) {
+        running = true;
+        init();
+        document.getElementById('msg').innerHTML = '';
+        loop = setInterval(step, 120);
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
