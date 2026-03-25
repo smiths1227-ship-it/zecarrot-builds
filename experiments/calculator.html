@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>calculator — zecarrot</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d0d0d; color: #e0e0e0; font-family: 'JetBrains Mono', monospace; min-height: 100vh; padding: 2rem; display: flex; flex-direction: column; }
+    nav { display: flex; gap: 2rem; margin-bottom: 3rem; font-size: 0.8rem; letter-spacing: 0.1em; }
+    nav a { color: #888; text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover, nav a.active { color: #ff6b35; }
+    .page { display: flex; flex-direction: column; align-items: center; flex: 1; }
+    h1 { font-size: 1.5rem; color: #fff; margin-bottom: 0.25rem; }
+    .sub { color: #555; font-size: 0.8rem; margin-bottom: 2rem; }
+    .calc {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 300px;
+    }
+    .display {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: right;
+      margin-bottom: 1rem;
+    }
+    .expr { color: #555; font-size: 0.75rem; min-height: 1rem; margin-bottom: 0.25rem; }
+    .result { color: #fff; font-size: 1.75rem; }
+    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    button {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: #ccc;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      padding: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    button:hover { background: #252525; border-color: #444; }
+    button.op { color: #ff6b35; border-color: #2a1a10; }
+    button.op:hover { background: #1f1208; border-color: #ff6b35; }
+    button.eq { background: #ff6b35; color: #000; border-color: #ff6b35; font-weight: bold; }
+    button.eq:hover { background: #ff8555; }
+    button.wide { grid-column: span 2; }
+    .footer { margin-top: auto; padding-top: 3rem; color: #444; font-size: 0.75rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../index.html">home</a>
+    <a href="../projects.html">projects</a>
+    <a href="../about.html">about</a>
+    <a href="calculator.html" class="active">experiments</a>
+  </nav>
+  <div class="page">
+    <h1>calculator</h1>
+    <p class="sub">// experiment 001</p>
+    <div class="calc">
+      <div class="display">
+        <div class="expr" id="expr"></div>
+        <div class="result" id="result">0</div>
+      </div>
+      <div class="buttons">
+        <button class="op" onclick="clearAll()">AC</button>
+        <button class="op" onclick="toggleSign()">+/-</button>
+        <button class="op" onclick="percent()">%</button>
+        <button class="op" onclick="input('/')">÷</button>
+        <button onclick="input('7')">7</button>
+        <button onclick="input('8')">8</button>
+        <button onclick="input('9')">9</button>
+        <button class="op" onclick="input('*')">×</button>
+        <button onclick="input('4')">4</button>
+        <button onclick="input('5')">5</button>
+        <button onclick="input('6')">6</button>
+        <button class="op" onclick="input('-')">−</button>
+        <button onclick="input('1')">1</button>
+        <button onclick="input('2')">2</button>
+        <button onclick="input('3')">3</button>
+        <button class="op" onclick="input('+')">+</button>
+        <button class="wide" onclick="input('0')">0</button>
+        <button onclick="input('.')">.</button>
+        <button class="eq" onclick="calculate()">=</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer">zecarrot-builds &mdash; made with too much free time</div>
+  <script>
+    let expr = '', justCalc = false;
+    const ops = ['+','-','*','/'];
+    function input(v) {
+      if (justCalc && !ops.includes(v)) { expr = ''; }
+      justCalc = false;
+      if (ops.includes(v) && ops.includes(expr.slice(-1))) expr = expr.slice(0,-1);
+      expr += v;
+      update();
+    }
+    function update() {
+      document.getElementById('expr').textContent = expr.replace(/\*/g,'×').replace(/\//g,'÷');
+      try {
+        let r = Function('"use strict"; return (' + expr + ')')();
+        document.getElementById('result').textContent = isFinite(r) ? +r.toFixed(10) : 'Error';
+      } catch { document.getElementById('result').textContent = '...'; }
+    }
+    function calculate() {
+      try {
+        let r = Function('"use strict"; return (' + expr + ')')();
+        document.getElementById('expr').textContent = expr.replace(/\*/g,'×').replace(/\//g,'÷') + ' =';
+        document.getElementById('result').textContent = isFinite(r) ? +r.toFixed(10) : 'Error';
+        expr = String(isFinite(r) ? +r.toFixed(10) : '');
+        justCalc = true;
+      } catch { document.getElementById('result').textContent = 'Error'; }
+    }
+    function clearAll() { expr = ''; document.getElementById('expr').textContent = ''; document.getElementById('result').textContent = '0'; }
+    function toggleSign() { if (expr) { expr = expr.startsWith('-') ? expr.slice(1) : '-' + expr; update(); } }
+    function percent() { try { let r = Function('"use strict"; return (' + expr + ')')(); expr = String(r/100); update(); } catch {} }
+  </script>
+</body>
+</html>
